@@ -16,11 +16,10 @@ enemigas logran impactar varias veces en la nave del jugador.
 # Se importan las bibliotecas que se utilizaran en el programa.
 import pygame
 import os
-import time
 import random
-# COMENTARIO
+# Se incializa pygame.
 pygame.init()
-# Se inicia el pygame en el programa.
+# Se inicia las fuentes de pygame .
 pygame.font.init()
 # Se define la altura y el ancho de la ventana de juego.
 ancho = 750
@@ -43,16 +42,20 @@ laser_rojo = pygame.image.load(os.path.join("laser_rojo.png"))
 laser_verde = pygame.image.load(os.path.join("laser_verde.png"))
 laser_azul = pygame.image.load(os.path.join("laser_azul.png"))
 laser_amarillo = pygame.image.load(os.path.join("laser_amarillo.png"))
-# COMENTARIO
+# Se cargan los sonidos que se usaran.
 laserSound = pygame.mixer.Sound('laser.wav')
 explosionSound = pygame.mixer.Sound('explosion.wav')
 gameoverSound = pygame.mixer.Sound('gameover.wav')
 # Se carga el fondo de la pantalla.
-BG = pygame.transform.scale(pygame.image.load(os.path.join("fondo.png")), (ancho, altura))
-# COMENTARIO
+BG = pygame.transform.scale(pygame.image.load(os.path.join("fondo.png")),
+                            (ancho, altura))
+# Se carga la musica que se va a utilizar y se guarda en la variable musica.
 music = pygame.mixer.music.load("background.wav")
+# Se reproduce la cancion en bucle.
 pygame.mixer.music.play(-1)
 # Se define la clase de Laser.
+
+
 class Laser:
     # Se crea el metodo construcor con "x", "y" y "img" como parametros.
     def __init__(self, x, y, img):
@@ -61,14 +64,18 @@ class Laser:
         self.img = img
         self.mask = pygame.mask.from_surface(self.img)
     # Se crea la superficie del laser en las coordenadas dadas.
+
     def draw(self, ventana):
         ventana.blit(self.img, (self.x, self.y))
-    # Se le da movimiento al laser al moverlo a una cierta velocidad en el eje y
+    # Se le da movimiento al laser al moverlo a una cierta velocidad en el ejey
+
     def move(self, vel):
         self.y += vel
     # Se verifica que el laser se encuentre dentro de la pantalla.
+
     def off_screen(self, altura):
-        # El laser tiene que estar por arriba del 0 y abajo de la altura maxima.
+        # El laser tiene que estar por arriba del 0 y abajo de la
+        # altura maxima.
         return not(self.y <= altura and self.y >= 0)
 
     # Se llama la funcion de colision.
@@ -76,11 +83,15 @@ class Laser:
         return collide(self, obj)
 
 # Se crea la clase Ship, la cual se encarga de las naves.
+
+
 class Ship:
     # Se define un enfriamiento de 30.
     COOLDOW = 30
-    # Se crea el metodo constructor con "x", "y" y "salud = 100" como parametros
-    def __init__(self, x, y, salud = 100):
+    # Se crea el metodo constructor con "x", "y" y "salud = 100" como
+    # parametros
+
+    def __init__(self, x, y, salud=100):
         # Se definen nuevas variables como ship_img, laser_img, lasers y
         # contador_enfriamiento
         self.x = x
@@ -94,12 +105,14 @@ class Ship:
         self.lasers = []
         self.contador_enfriamiento = 0
     # Se crea la superfice de la nave en las coordenadas dadas.
+
     def draw(self, ventana):
         ventana.blit(self.ship_img, (self.x, self.y))
         # Se pasan a la fucnion draw todos los lasers que esten en la lista.
         for laser in self.lasers:
             laser.draw(ventana)
     # Se le da movimiento al laser, se ocupa una velocidad y un obejto.
+
     def move_lasers(self, vel, obj):
         # Se llama la funcion enfriamiento.
         self.enfriamiento()
@@ -115,8 +128,10 @@ class Ship:
                 obj.salud -= 10
                 self.lasers.remove(laser)
     # Se crea la funcion enfriamiento para tener un tiempo entre tiro y tiro.
+
     def enfriamiento(self):
-        # Si el contador_enfriamiento es mayor al COOLDOW el contador_enfriamiento
+        # Si el contador_enfriamiento es mayor al COOLDOW el
+        # contador_enfriamiento
         # Se reinicia
         if self.contador_enfriamiento >= self.COOLDOW:
             self.contador_enfriamiento = 0
@@ -124,6 +139,7 @@ class Ship:
         elif self.contador_enfriamiento > 0:
             self.contador_enfriamiento += 1
     # Se crea la funcion de shoot.
+
     def shoot(self):
         # Si contador_enfriamiento es igual a 0
         if self.contador_enfriamiento == 0:
@@ -134,13 +150,17 @@ class Ship:
             # El contador_enfriamiento se vuelve 1.
             self.contador_enfriamiento = 1
     # Con la funcion get_width se determina el ancho de las imagenes.
+
     def get_width(self):
         return self.ship_img.get_width()
     # Con la funcion get_height se determina la altura de las imagenes.
+
     def get_height(self):
         return self.ship_img.get_height()
 
 # Se crea la clase Player la cual a su vez llama a la clase Ship.
+
+
 class Player(Ship):
     # Se crea el metodo constructor con los mismos parametros.
     def __init__(self, x, y, salud=100):
@@ -157,6 +177,7 @@ class Player(Ship):
         # Se define el score como 0
         self.score = 0
     # Igual que en la clase Ship.
+
     def move_lasers(self, vel, objs):
         self.enfriamiento()
         for laser in self.lasers:
@@ -177,15 +198,29 @@ class Player(Ship):
                             self.lasers.remove(laser)
     # Se hereda la funcion draw de la clase Ship.
     # Se crea la superficie de la barra de salud
+
     def draw(self, ventana):
         super().draw(ventana)
         self.barra_salud(ventana)
-    # Se crea una barra de salud al crear dos rectangulos: uno verde y uno rojo.
+    # Se crea una barra de salud al crear dos rectangulos: uno verde y uno
+    # rojo.
+
     def barra_salud(self, ventana):
-        pygame.draw.rect(ventana, (255,0,0), (self.x, self.y + self.ship_img.get_height() + 10, self.ship_img.get_width(), 10))
-        pygame.draw.rect(ventana, (0,138,140), (self.x, self.y + self.ship_img.get_height() + 10, self.ship_img.get_width() * (self.salud/self.max_salud), 10))
+        pygame.draw.rect(ventana, (255, 0, 0), (self.x, self.y +
+                                                self.ship_img.get_height() +
+                                                10, self.ship_img.get_width(),
+                                                10))
+        pygame.draw.rect(ventana, (0, 138, 140), (self.x, self.y +
+                                                  self.ship_img.get_height()
+                                                  + 10,
+                                                  self.ship_img.get_width()
+                                                  *
+                                                  (self.salud/self.max_salud),
+                                                  10))
 
 # Se crea la clase Enemy la cual llama a la clase Ship
+
+
 class Enemy(Ship):
     # Se crea un diccionario con los colores de las naves.
     COLOR_MAP = {
@@ -194,7 +229,8 @@ class Enemy(Ship):
                 "blue": (nave_azul, laser_azul)
                 }
     # Se crea el metodo constructor con los mismos parametros mas el color.
-    def __init__(self, x, y, color, salud = 100):
+
+    def __init__(self, x, y, color, salud=100):
         # Se hereda el __init__() de la clase Ship.
         super().__init__(x, y, salud)
         # Se define el color de la nave y del laser.
@@ -202,9 +238,11 @@ class Enemy(Ship):
         # Se crea una mascara en la imagen de la nave
         self.mask = pygame.mask.from_surface(self.ship_img)
     # Se le da movimiento a la nave con la velocidad en el eje y.
+
     def move(self, vel):
         self.y += vel
     # Se crea la funcion shoot para que la nave dispare los lasers.
+
     def shoot(self):
         # Si el contador_enfriamiento es igual a 0.
         if self.contador_enfriamiento == 0:
@@ -216,14 +254,18 @@ class Enemy(Ship):
             self.contador_enfriamiento = 1
 
 # Se define la funcio collide con dos objetos como parametros.
+
+
 def collide(obj1, obj2):
     # Se obtiene la distancia entre los objetos en x y en y
     offset_x = obj2.x - obj1.x
     offset_y = obj2.y - obj1.y
     # Si la ditancia de estos objetos se superpone entonces devuelve True.
-    return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) != None
+    return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) is not None
 
 # Se crea la funcion main.
+
+
 def main():
     # Se define a run como True.
     run = True
@@ -255,22 +297,27 @@ def main():
     # Se verifica si el archivo existe o no.
     if os.path.exists("highest score.txt"):
         # Se abre el archivo del highscore
-            with open("highest score.txt", "r") as file:
-                # Se lee el archivo y se asigna a high_score.
-                high_score = int(file.read())
+        with open("highest score.txt", "r") as file:
+            # Se lee el archivo y se asigna a high_score.
+            high_score = int(file.read())
     # Si no encuentra ningun archivo se asigna un valor de 0 a high_score.
     else:
         high_score = 0
-    # Comentario
+    # Se asigna un metodo para el menu de pausa.
+
     def pause():
         paused = True
         while paused:
+            # Se pone un titulo para el usuario sepa que esta en el menu de
+            # pausa
             title_sec = pygame.font.SysFont("comicsans", 50)
-            WIN.blit(BG, (0,0))
-            title_label = title_sec.render("Presion C para continuar o Q para salir ", 1, (255,255,255))
+            WIN.blit(BG, (0, 0))
+            title_label = title_sec.render("Presion C para continuar o Q \
+             para salir ", 1, (255, 255, 255))
             WIN.blit(title_label, (ancho/2 - title_label.get_width()/2, 350))
             pygame.display.update()
             for event in pygame.event.get():
+                # Se define que se hara si se presiona la letra c o q.
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
@@ -280,17 +327,21 @@ def main():
                     elif event.key == pygame.K_q:
                         pygame.quit()
                         quit()
+            # Se actualiza la pantalla
             pygame.display.update
             reloj.tick(5)
 
     # Se redibuja la ventana.
     def redraw_ventana():
         # Se crea la superficie del fondo en la ventana principal.
-        WIN.blit(BG, (0,0))
+        WIN.blit(BG, (0, 0))
         # Se ponene los textos de la pantalla
-        nivel_label = main_font.render(f"Nivel: {nivel}", 1, (255,255,255))
-        score_label = main_font.render(f"Score: {player.score}", 1, (255,255,255))
-        highscore_label = main_font.render(f"Highscore: {high_score}", 1, (255,255,255))
+        nivel_label = main_font.render(f"Nivel: {nivel}", 1,
+                                       (255, 255, 255))
+        score_label = main_font.render(f"Score: {player.score}", 1,
+                                       (255, 255, 255))
+        highscore_label = main_font.render(f"Highscore: {high_score}",
+                                           1, (255, 255, 255))
 
         # Se ubican los textos en la pantalla.
         WIN.blit(nivel_label, (ancho - nivel_label.get_width() - 10, 10))
@@ -305,9 +356,9 @@ def main():
 
         # Si se pierde se pone el texto de "Game Over"
         if perder:
-            perder_label = lost_font.render("Game Over", 1, (255,255,255))
+            perder_label = lost_font.render("Game Over", 1, (255, 255, 255))
             WIN.blit(perder_label, (ancho/2 - perder_label.get_width()/2, 350))
-            #COMENTARIO
+            # Un segundo de perder suena el sonido game over.
             if tiempo_perder == FPS * 1:
                 gameoverSound.play()
 
@@ -320,9 +371,8 @@ def main():
         reloj.tick(FPS)
         redraw_ventana()
 
-
         # Si la salud del jugador es igual o menor a 0 se pierde.
-        if  player.salud <= 0:
+        if player.salud <= 0:
             perder = True
             # El tiempo contar se aumenta en 1.
             tiempo_perder += 1
@@ -341,7 +391,9 @@ def main():
             # Se crean los enenmigos que se encuentran en la oleada.
             # La ubicacion en "x", en "y" y el color de la nave son randoms.
             for i in range(oleada):
-                enemy = Enemy(random.randrange(50, ancho-100), random.randrange(-1500, -100), random.choice(["red", "blue", "green"]))
+                enemy = Enemy(random.randrange(50, ancho-100),
+                              random.randrange(-1500, -100),
+                              random.choice(["red", "blue", "green"]))
                 # Se añaden los enemigos a la lista de enemies.
                 enemies.append(enemy)
 
@@ -351,18 +403,20 @@ def main():
                 quit()
         # Se obtienen todas las teclas y sus funciones
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a] and player.x - player_vel > 0: # izquierda
+        if keys[pygame.K_a] and player.x - player_vel > 0:   # izquierda
             player.x -= player_vel
-        if keys[pygame.K_d] and player.x + player_vel + player.get_width() < ancho: # derecha
+        if keys[pygame.K_d] and player.x + player_vel + \
+                player.get_width() < ancho:   # derecha
             player.x += player_vel
-        if keys[pygame.K_w] and player.y - player_vel > 0: # arriba
+        if keys[pygame.K_w] and player.y - player_vel > 0:   # arriba
             player.y -= player_vel
-        if keys[pygame.K_s] and player.y + player_vel + player.get_height() + 15 < altura: # abajo
+        if keys[pygame.K_s] and player.y + player_vel + \
+                player.get_height() + 15 < altura:   # abajo
             player.y += player_vel
-        if keys[pygame.K_SPACE]: # disparar
+        if keys[pygame.K_SPACE]:  # disparar
             player.shoot()
             laserSound.play()
-        if keys[pygame.K_p]: # Pausa
+        if keys[pygame.K_p]:   # Pausa
             pause()
         # Cada enemigo se tiene que mover al igual que los lasers.
         for enemy in enemies[:]:
@@ -373,12 +427,13 @@ def main():
             if random.randrange(0, 2*60) == 1:
                 enemy.shoot()
 
-            # Si el jugador cocha con una nave
+            # Si el jugador chocha con una nave
             # Se restan 10 a la salud y se elimina la nave de la lista.
             if collide(enemy, player):
                 player.salud -= 10
-                #COMENTARIO
+                # Suena el sonido explosion si dos naves chocan
                 explosionSound.play()
+                # Se elimina la nave de la lista.
                 enemies.remove(enemy)
 
             # Si el enemigo se sale de la pantalla se elimina de la lista.
@@ -393,10 +448,12 @@ def main():
         if player.score > high_score:
             high_score = player.score
             # Se abre el archivo y se escribe el valor.
-            with open ("highest score.txt", "w") as file:
+            with open("highest score.txt", "w") as file:
                 file.write(str(high_score))
 
 # Se define la funcion de main_menu.
+
+
 def main_menu():
     # Se define la fuente del titulo.
     fuente_titulo = pygame.font.SysFont("comicsans", 60)
@@ -405,9 +462,10 @@ def main_menu():
     # Se inicia el ciclo.
     while run:
         # Se crea la venana con el fondo.
-        WIN.blit(BG, (0,0))
+        WIN.blit(BG, (0, 0))
         # Se crea el titulo.
-        texto_titulo = fuente_titulo.render("Presiona el mouse para empezar", 1, (255,255,255))
+        texto_titulo = fuente_titulo.render("Presiona el mouse para empezar",
+                                            1, (255, 255, 255))
         # Se ubica el titulo.
         WIN.blit(texto_titulo, (ancho/2 - texto_titulo.get_width()/2, 350))
         # Se actualiza la pantalla.
@@ -423,4 +481,6 @@ def main_menu():
     pygame.quit()
 
 # Se inicia el main_menu
+
+
 main_menu()
