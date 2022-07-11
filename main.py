@@ -5,7 +5,6 @@ Sebastian Vargas Quesada
 C18295
 Luis Felipe Aguero Peralta
 C10089
-
 Este programa es una recreacion del juego "Space Invaders", el cual se utilizar
 la extension de pygame para crearlo. El juego consiste en destruir naves
 espaciales al lanzar un laser, ademas las naves enemigas tambien lazan lasers.
@@ -312,8 +311,8 @@ def main():
             # pausa
             title_sec = pygame.font.SysFont("comicsans", 50)
             WIN.blit(BG, (0, 0))
-            title_label = title_sec.render("Presion C para continuar o Q \
-             para salir ", 1, (255, 255, 255))
+            title_label = title_sec.render("Presion C para continuar o Q"
+                                           " para salir ", 1, (255, 255, 255))
             WIN.blit(title_label, (ancho/2 - title_label.get_width()/2, 350))
             pygame.display.update()
             for event in pygame.event.get():
